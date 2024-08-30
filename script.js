@@ -2,6 +2,47 @@ let addBtn = document.getElementById("enter");
 let newInputTask = document.querySelector(".task");
 let tasksContainer = document.querySelector(".to-do-list");
 
+//Function to add the tasks and store in local storage
+const addTaskToLocal = (taskData = {}) => {
+    let taskName = taskData.name || newInputTask.value.trim();
+
+    //Store upated task in local Storage
+    const tasks = JSON.parse(localStorage.getItem("tasks"));
+    tasks.push({name: taskName});
+    localStorage.setItem("tasks",JSON.stringify(tasks));
+};
+
+//Function to retrieve the tasks from local storage.
+function getTaskFromLocal(){
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    tasks.forEach(task => {
+        addTask(task);
+    });
+}
+
+//Function to update task and store in local storage.
+function updateTask(taskId, newTaskName){
+    const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    const updatedTasks = tasks.map(task => {
+        if (task.id === taskId){
+            return { ...task, name: newTaskName};
+        }
+        return task;
+    });
+    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+}
+
+//Function to delete task and store in local storage.
+function deleteTask(taskId){
+    const tasks = JSON.parse(localStorage.getItem(tasks)) || [];
+    const updatedTasks = tasks.filter(task => task.id !== taskId);
+
+    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+}
+
+//Retrieve task on page reload from local storage.
+getTaskFromLocal();
+
 const addTask = () => {
     let taskName = newInputTask.value.trim();
 
@@ -24,8 +65,6 @@ const addTask = () => {
     deleteButtons.forEach(button => {
         button.onclick = () => {
             button.parentNode.remove();
-            // taskCount = -1;
-            // displayCount(taskCount);
         };
     });
 
@@ -34,8 +73,6 @@ const addTask = () => {
     editButtons.forEach(editBtn => {
         editBtn.onclick = () => {
             editBtn.parentNode.remove();
-            // taskCount -= 1;
-            // displayCount(taskCount);
         }    
     });
 
@@ -50,6 +87,8 @@ const addTask = () => {
    //make input field blank after adding a task.
     newInputTask.value = "";
 };
+
+
 
 //add event listener to add task button. 
 addBtn.addEventListener("click", addTask);
